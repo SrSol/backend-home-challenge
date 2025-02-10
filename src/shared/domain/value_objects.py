@@ -18,6 +18,9 @@ class Email(BaseModel):
     def __str__(self):
         return self.value
 
+    def model_dump(self, **kwargs):
+        return self.value
+
 class Money(BaseModel):
     amount: float
     currency: str = "MXN"

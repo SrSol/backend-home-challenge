@@ -1,0 +1,22 @@
+# File: pyproject.toml
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "restaurant-service"
+version = "0.1.0"
+authors = [
+  { name = "Tonatiuh García", email = "mrsun21@gmail.com" },
+]
+description = "Restaurant Service API"
+requires-python = ">=3.8"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
+testpaths = [
+    "tests",
+]
+python_files = ["test_*.py", "*_test.py"]

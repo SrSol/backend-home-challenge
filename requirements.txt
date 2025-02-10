@@ -25,6 +25,7 @@ pytest-cov==4.1.0
 pytest-asyncio==0.23.4
 httpx==0.26.0
 factory-boy==3.3.0
+pytest-mock==3.14.0
 
 # Utilities
 python-dotenv==1.0.0
