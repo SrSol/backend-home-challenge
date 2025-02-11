@@ -2,27 +2,16 @@ import pytest
 from datetime import datetime
 from decimal import Decimal
 from src.order.application.create_order import CreateOrderCommand
-from src.order.application.dto.order_dto import CreateOrderDTO, OrderItemDTO
+from src.order.application.dto.order_dto import CreateOrderDTO, OrderItemDTO, OrderResponseDTO
 from src.order.domain.model.order import Order, OrderItem
 from src.shared.domain.value_objects import Money
 
 class TestCreateOrderCommand:
     @pytest.fixture
-    def sample_order_dto(self):
-        return CreateOrderDTO(
-            customer_name="Test Customer",
-            items=[
-                OrderItemDTO(
-                    product_name="Test Product",
-                    unit_price=Decimal("10.00"),
-                    quantity=2
-                )
-            ]
-        )
-
-    @pytest.fixture
-    def mock_order(self):
-        return Order(
+    def order_service(self, mocker):
+        service = mocker.Mock()
+        # Configurar el mock para devolver un OrderResponseDTO
+        service.create_order.return_value = Order(
             id=1,
             customer_name="Test Customer",
             items=[
@@ -36,6 +25,7 @@ class TestCreateOrderCommand:
             waiter_id=1,
             created_at=datetime.utcnow()
         )
+        return service
 
     @pytest.fixture
     def user_service(self, mocker):
@@ -62,4 +52,5 @@ class TestCreateOrderCommand:
         
         # Then
         assert isinstance(result, OrderResponseDTO)
-        user_service.get_user_id_by_email.assert_called_once_with("test@example.com") 
+        user_service.get_user_id_by_email.assert_called_once_with("test@example.com")
+        order_service.create_order.assert_called_once() 

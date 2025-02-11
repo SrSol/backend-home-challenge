@@ -1,5 +1,5 @@
 # File: src/shared/domain/value_objects.py
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from typing import Optional
 from dataclasses import dataclass
@@ -38,7 +38,7 @@ class Email:
         return str(self)
 
 class Money(BaseModel):
-    amount: Decimal
+    amount: Decimal = Field(..., gt=0)  # Usar Field para validación
     currency: str = "MXN"
 
     @field_validator('amount', mode='before')
@@ -52,9 +52,6 @@ class Money(BaseModel):
                 v = Decimal(str(v))
             elif not isinstance(v, Decimal):
                 v = Decimal(str(v))
-
-            if v <= 0:
-                raise ValueError("Amount must be greater than 0")
             return v
         except Exception as e:
             raise ValueError(f"Invalid amount format: {v} ({type(v)})")

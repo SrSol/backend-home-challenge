@@ -44,6 +44,7 @@ class TestOrderService:
             ],
             waiter_id=1
         )
+        order_repository.save.return_value = order
         
         # When
         result = service.create_order(order)

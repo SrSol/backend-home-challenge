@@ -93,7 +93,7 @@ class TestOrderItemModel:
 
     def test_create_order_item_with_invalid_price_fails(self):
         # When/Then
-        with pytest.raises(ValidationException, match="Unit price must be greater than 0"):
+        with pytest.raises((ValidationException, ValueError), match="greater than 0"):
             OrderItem(
                 product_name="Test Product",
                 unit_price=Money(amount=Decimal("0")),
