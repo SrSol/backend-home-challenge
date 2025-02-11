@@ -11,28 +11,8 @@ class OrderService:
     def __init__(self, order_repository: OrderRepository):
         self._order_repository = order_repository
 
-    def create_order(
-        self, 
-        customer_name: str, 
-        items: List[dict],
-        waiter_id: int
-    ) -> Order:
+    def create_order(self, order: Order) -> Order:
         """Creates a new order"""
-        order_items = [
-            OrderItem(
-                product_name=item["product_name"],
-                unit_price=Money(amount=item["unit_price"]),
-                quantity=item["quantity"]
-            )
-            for item in items
-        ]
-        
-        order = Order.create(
-            customer_name=customer_name,
-            items=order_items,
-            waiter_id=waiter_id
-        )
-        
         return self._order_repository.save(order)
 
     def get_product_sales_report(

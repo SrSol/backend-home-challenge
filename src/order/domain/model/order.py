@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 from src.shared.domain.exceptions import ValidationException
 from src.shared.domain.value_objects import Money
+from decimal import Decimal
 
 @dataclass(frozen=True)
 class OrderItem:
@@ -32,9 +33,6 @@ class Order:
     id: Optional[int] = None
 
     def __post_init__(self):
-        self._validate()
-
-    def _validate(self):
         if not self.customer_name or len(self.customer_name.strip()) < 2:
             raise ValidationException("Customer name must be at least 2 characters long")
         if not self.items:
@@ -44,7 +42,14 @@ class Order:
 
     @property
     def total_price(self) -> Money:
-        return sum((item.total_price for item in self.items), Money(amount=0))
+        # Crear un Money con Decimal('0.01') como valor inicial
+        zero_money = Money(amount=Decimal('0.01'))
+        if not self.items:
+            return zero_money
+        
+        # Sumar los precios totales de cada item
+        total = sum((item.total_price.amount for item in self.items), Decimal('0'))
+        return Money(amount=total)
 
     @staticmethod
     def create(customer_name: str, items: List[OrderItem], waiter_id: int) -> 'Order':

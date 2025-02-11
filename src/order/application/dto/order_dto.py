@@ -42,14 +42,21 @@ class CreateOrderDTO(BaseModel):
         from src.order.domain.model.order import Order, OrderItem
         from src.shared.domain.value_objects import Money
         
-        items = [
-            OrderItem(
-                product_name=item.product_name,
-                unit_price=Money(amount=item.unit_price),
-                quantity=item.quantity
+        items = []
+        for item in self.items:
+            # Asegurarnos de que el precio sea Decimal
+            try:
+                unit_price = Money(amount=item.unit_price)
+            except Exception as e:
+                raise ValueError(f"Invalid unit price: {item.unit_price} ({type(item.unit_price)})")
+            
+            items.append(
+                OrderItem(
+                    product_name=item.product_name,
+                    unit_price=unit_price,
+                    quantity=item.quantity
+                )
             )
-            for item in self.items
-        ]
         
         return Order.create(
             customer_name=self.customer_name,
@@ -72,6 +79,25 @@ class OrderResponseDTO(BaseModel):
             Decimal: str
         }
     }
+
+    @classmethod
+    def from_entity(cls, order: 'Order') -> 'OrderResponseDTO':
+        """Converts Order entity to DTO"""
+        return cls(
+            id=order.id,
+            customer_name=order.customer_name,
+            items=[
+                OrderItemDTO(
+                    product_name=item.product_name,
+                    unit_price=item.unit_price.amount,
+                    quantity=item.quantity
+                )
+                for item in order.items
+            ],
+            total_price=order.total_price.amount,
+            waiter_id=order.waiter_id,
+            created_at=order.created_at
+        )
 
 class ProductSalesReportDTO(BaseModel):
     """DTO for product sales report"""

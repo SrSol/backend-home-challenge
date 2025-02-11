@@ -43,14 +43,21 @@ class Money(BaseModel):
 
     @field_validator('amount', mode='before')
     def validate_amount(cls, v):
-        if isinstance(v, str):
-            try:
+        try:
+            if isinstance(v, str):
                 v = Decimal(v)
-            except:
-                raise ValueError("Invalid amount format")
-        if v <= 0:
-            raise ValueError("Amount must be greater than 0")
-        return v
+            elif isinstance(v, float):
+                v = Decimal(str(v))
+            elif isinstance(v, int):
+                v = Decimal(str(v))
+            elif not isinstance(v, Decimal):
+                v = Decimal(str(v))
+
+            if v <= 0:
+                raise ValueError("Amount must be greater than 0")
+            return v
+        except Exception as e:
+            raise ValueError(f"Invalid amount format: {v} ({type(v)})")
 
     def __str__(self) -> str:
         return f"{self.amount:.2f}"
