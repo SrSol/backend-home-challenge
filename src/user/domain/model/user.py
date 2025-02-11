@@ -22,20 +22,15 @@ class User:
     def _validate(self) -> None:
         if not self.name or len(self.name.strip()) < 2:
             raise ValidationException("Name must be at least 2 characters long")
-        if not isinstance(self.email, Email):
-            try:
-                Email(value=self.email)
-            except:
-                raise ValidationException("Invalid email format")
 
     @staticmethod
     def create(email: str, name: str) -> 'User':
         """Factory method to create a new user"""
         try:
             email_obj = Email(value=email)
-        except:
-            raise ValidationException("Invalid email format")
-            
+        except ValueError as e:
+            raise ValidationException(str(e))
+
         user = User(
             email=email_obj,
             name=name,
@@ -43,3 +38,6 @@ class User:
         )
         user._validate()
         return user
+
+    def __str__(self):
+        return f"{self.name} <{self.email}>"

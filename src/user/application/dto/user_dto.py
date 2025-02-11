@@ -1,6 +1,8 @@
 # File: src/user/application/dto/user_dto.py
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
+from typing import Optional
+from src.user.domain.model.user import User
 
 class CreateUserDTO(BaseModel):
     """DTO for user creation requests"""
@@ -23,7 +25,7 @@ class CreateUserDTO(BaseModel):
 
 class UserResponseDTO(BaseModel):
     """DTO for user responses"""
-    id: int
+    id: Optional[int]
     email: str
     name: str
     created_at: datetime
@@ -32,12 +34,11 @@ class UserResponseDTO(BaseModel):
         from_attributes = True
 
     @classmethod
-    def from_orm(cls, obj):
-        obj_dict = {
-            'id': obj.id,
-            'email': str(obj.email),
-            'name': obj.name,
-            'created_at': obj.created_at
-        }
-        return cls(**obj_dict)
+    def from_entity(cls, user: User) -> 'UserResponseDTO':
+        return cls(
+            id=user.id,
+            email=str(user.email),
+            name=user.name,
+            created_at=user.created_at
+        )
 

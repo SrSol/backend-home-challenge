@@ -1,32 +1,48 @@
 # File: tests/unit/user/application/test_get_user.py
 import pytest
 from datetime import datetime
+from unittest.mock import Mock
 from src.user.application.get_user import GetUserQuery
-from src.shared.domain.value_objects import Email
 from src.user.domain.model.user import User
+from src.shared.domain.value_objects import Email
+from src.user.application.dto.user_dto import UserResponseDTO
 
 class TestGetUserQuery:
     @pytest.fixture
-    def get_user_query(self, mock_user_service):
-        return GetUserQuery(mock_user_service)
+    def mock_user(self):
+        return User(
+            id=None,
+            email=Email(value="test@example.com"),
+            name="Test User",
+            created_at=datetime.utcnow()
+        )
 
-    def test_execute_user_found(self, get_user_query, mock_user_service, mock_user):
+    def test_execute_user_found(self, mocker, mock_user):
+        # Given
+        mock_service = mocker.Mock()
+        mock_service.get_user_by_email.return_value = UserResponseDTO.from_entity(mock_user)
+        
+        query = GetUserQuery(mock_service)
+        
         # When
-        result = get_user_query.execute("test@example.com")
+        result = query.execute("test@example.com")
         
         # Then
-        mock_user_service.get_user_by_email.assert_called_once_with("test@example.com")
-        assert result.id == mock_user.id
+        assert isinstance(result, UserResponseDTO)
         assert result.email == str(mock_user.email)
         assert result.name == mock_user.name
+        mock_service.get_user_by_email.assert_called_once_with("test@example.com")
 
-    def test_execute_user_not_found(self, get_user_query, mock_user_service):
+    def test_execute_user_not_found(self, mocker):
         # Given
-        mock_user_service.get_user_by_email.return_value = None
+        mock_service = mocker.Mock()
+        mock_service.get_user_by_email.return_value = None
+        
+        query = GetUserQuery(mock_service)
         
         # When
-        result = get_user_query.execute("nonexistent@example.com")
+        result = query.execute("nonexistent@example.com")
         
         # Then
         assert result is None
-        mock_user_service.get_user_by_email.assert_called_once_with("nonexistent@example.com")
+        mock_service.get_user_by_email.assert_called_once_with("nonexistent@example.com")

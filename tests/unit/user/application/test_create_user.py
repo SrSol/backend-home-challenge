@@ -1,31 +1,41 @@
 # File: tests/unit/user/application/test_create_user.py
 import pytest
 from datetime import datetime
+from unittest.mock import Mock
 from src.user.application.create_user import CreateUserCommand
-from src.user.application.dto.user_dto import CreateUserDTO
-from src.shared.domain.value_objects import Email
 from src.user.domain.model.user import User
+from src.shared.domain.value_objects import Email
+from src.user.application.dto.user_dto import UserResponseDTO, CreateUserDTO
 
 class TestCreateUserCommand:
     @pytest.fixture
-    def create_user_command(self, mock_user_service):
-        return CreateUserCommand(mock_user_service)
+    def mock_user(self):
+        return User(
+            id=None,
+            email=Email(value="test@example.com"),
+            name="Test User",
+            created_at=datetime.utcnow()
+        )
 
-    def test_execute_success(self, create_user_command, mock_user_service, mock_user):
+    def test_execute_success(self, mocker, mock_user):
         # Given
-        user_dto = CreateUserDTO(
+        mock_service = mocker.Mock()
+        mock_service.create_user.return_value = UserResponseDTO.from_entity(mock_user)
+        
+        command = CreateUserCommand(mock_service)
+        user_data = CreateUserDTO(
             email="test@example.com",
             name="Test User"
         )
         
         # When
-        result = create_user_command.execute(user_dto)
+        result = command.execute(user_data.model_dump())
         
         # Then
-        mock_user_service.create_user.assert_called_once_with(
-            email=user_dto.email,
-            name=user_dto.name
-        )
-        assert result.id == mock_user.id
+        assert isinstance(result, UserResponseDTO)
         assert result.email == str(mock_user.email)
         assert result.name == mock_user.name
+        mock_service.create_user.assert_called_once_with(
+            email="test@example.com",
+            name="Test User"
+        )

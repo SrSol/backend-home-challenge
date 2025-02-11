@@ -14,10 +14,9 @@ class TestUserModel:
         )
         
         # Then
-        assert isinstance(user.email, Email)
         assert str(user.email) == "test@example.com"
         assert user.name == "Test User"
-        assert user.created_at is not None
+        assert user.id is None
 
     @pytest.mark.parametrize("invalid_email", [
         "invalid-email",

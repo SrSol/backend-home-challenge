@@ -1,5 +1,5 @@
 # File: src/main.py
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -16,6 +16,10 @@ from src.shared.domain.exceptions import (
     ValidationException,
     UnauthorizedException
 )
+from src.user.infrastructure.api.user_routes import router as user_routes
+from src.order.infrastructure.api.order_routes import router as order_routes
+from src.product.infrastructure.api.product_routes import router as product_routes
+from src.auth.infrastructure.api.auth_routes import router as auth_routes
 
 # Get settings first
 settings = get_settings()
@@ -51,9 +55,6 @@ app.add_exception_handler(EntityNotFoundException, not_found_exception_handler)
 app.add_exception_handler(ValidationException, validation_exception_handler)
 app.add_exception_handler(UnauthorizedException, unauthorized_exception_handler)
 
-# Import routers after configuring exception handlers
-from src.user.infrastructure.api.user_routes import router as user_routes
-
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -66,5 +67,30 @@ app.add_middleware(
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
+# Configurar manejadores de excepciones específicos
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    headers = getattr(exc, "headers", None)
+    if exc.status_code == 401:
+        if not headers:
+            headers = {}
+        headers["WWW-Authenticate"] = "Bearer"
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+        headers=headers
+    )
+
+@app.exception_handler(UnauthorizedException)
+async def unauthorized_exception_handler(request: Request, exc: UnauthorizedException):
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        content={"detail": str(exc)},
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
 # Include routers
 app.include_router(user_routes, prefix=settings.API_V1_STR)
+app.include_router(order_routes, prefix=settings.API_V1_STR)
+app.include_router(product_routes, prefix=settings.API_V1_STR)
+app.include_router(auth_routes, prefix=settings.API_V1_STR)
