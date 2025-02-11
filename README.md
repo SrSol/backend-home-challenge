@@ -72,7 +72,7 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ## API Endpoints
 
 - `POST /api/v1/auth/login` - Login de usuario
-- `GET /api/v1/users` - Listar usuarios
+- `POST /api/v1/users` - Crear usuario
 - `POST /api/v1/orders` - Crear orden
 - `GET /api/v1/orders/report` - Reporte de ventas
 

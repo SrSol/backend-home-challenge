@@ -1,4 +1,3 @@
-# File: src/main.py
 from fastapi import FastAPI, Request, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
@@ -18,7 +17,6 @@ from src.shared.domain.exceptions import (
 )
 from src.user.infrastructure.api.user_routes import router as user_routes
 from src.order.infrastructure.api.order_routes import router as order_routes
-from src.product.infrastructure.api.product_routes import router as product_routes
 from src.auth.infrastructure.api.auth_routes import router as auth_routes
 
 # Get settings first
@@ -92,5 +90,4 @@ async def unauthorized_exception_handler(request: Request, exc: UnauthorizedExce
 # Include routers
 app.include_router(user_routes, prefix=settings.API_V1_STR)
 app.include_router(order_routes, prefix=settings.API_V1_STR)
-app.include_router(product_routes, prefix=settings.API_V1_STR)
 app.include_router(auth_routes, prefix=settings.API_V1_STR)

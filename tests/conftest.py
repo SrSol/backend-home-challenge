@@ -10,7 +10,6 @@ from fastapi.testclient import TestClient
 from src.main import app
 from decimal import Decimal
 from src.order.domain.model.order import Order, OrderItem
-from src.product.domain.model.product import Product
 from src.auth.infrastructure.jwt_service import JWTService
 from src.user.infrastructure.persistence.postgresql_user_repository import PostgresqlUserRepository
 
@@ -42,19 +41,19 @@ def test_session(test_engine, TestingSessionLocal):
 
 @pytest.fixture(scope="function")
 def test_db(test_engine, TestingSessionLocal):
-    Base.metadata.drop_all(bind=test_engine)  # Limpiar primero
+    Base.metadata.drop_all(bind=test_engine)
     Base.metadata.create_all(bind=test_engine)
-    
+
     def override_get_db():
         try:
             db = TestingSessionLocal()
             yield db
         finally:
             db.close()
-    
+
     app.dependency_overrides[get_db] = override_get_db
     db = TestingSessionLocal()
-    
+
     try:
         yield db
     finally:
@@ -65,7 +64,6 @@ def test_db(test_engine, TestingSessionLocal):
 
 @pytest.fixture
 def client(test_db):
-    # No crear el usuario aquí, dejarlo para las pruebas específicas
     return TestClient(app)
 
 @pytest.fixture
@@ -116,25 +114,6 @@ def mock_order(mock_user, mock_order_item):
         waiter_id=mock_user.id,
         created_at=datetime.utcnow()
     )
-
-@pytest.fixture
-def mock_product():
-    now = datetime.utcnow()
-    return Product(
-        id=1,
-        name="Test Product",
-        current_price=Money(amount=Decimal("10.00")),
-        created_at=now,
-        updated_at=now
-    )
-
-@pytest.fixture
-def mock_product_service(mocker, mock_product):
-    service = mocker.Mock()
-    service.get_all_products.return_value = [mock_product]
-    service.get_product_by_name.return_value = mock_product
-    service.create_or_update_product.return_value = mock_product
-    return service
 
 @pytest.fixture
 def test_user(test_db):

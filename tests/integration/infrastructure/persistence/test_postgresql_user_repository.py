@@ -1,9 +1,7 @@
-# File: tests/integration/infrastructure/persistence/test_postgresql_user_repository.py
 import pytest
 from datetime import datetime
 from src.user.domain.model.user import User
 from src.user.infrastructure.persistence.postgresql_user_repository import PostgresqlUserRepository
-from src.shared.domain.exceptions import EntityNotFoundException
 
 class TestPostgresqlUserRepository:
     @pytest.fixture
