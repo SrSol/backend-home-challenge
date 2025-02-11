@@ -11,16 +11,21 @@ EXPOSE 8000
 ENV USER app
 ENV USER_HOME /opt/$USER
 
+
 ADD app.tar $USER_HOME
 
 WORKDIR $USER_HOME
 
 RUN pip install -r requirements.txt
+
 RUN mv container/run.sh .
+RUN chmod +x run.sh
 
 RUN useradd -r -d $USER_HOME $USER
 RUN chown -R $USER:$USER $USER_HOME
 
 USER $USER
 
-ENTRYPOINT ["sh", "./run.sh"]
+ENV PYTHONPATH="${PYTHONPATH}:/opt/app"
+
+CMD ["./run.sh"]

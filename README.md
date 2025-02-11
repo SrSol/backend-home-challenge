@@ -86,12 +86,6 @@ Ejecutar todos los tests
 pytest
 ```
 
-Tests con cobertura
-
-```bash
-pytest --cov=src
-```
-
 Tests específicos
 
 ```bash
@@ -103,16 +97,16 @@ pytest tests/integration/
 
 ### Build
 
-Construir imagen.
+Construir imagen. Entrar a la carpeta `container` y ejecutar el script `build.sh`.
 
 ```bash
-docker build -t backend-home-challenge .
+./build.sh
 ```
 
 Ejecutar contenedor.
 
 ```bash
-docker run -d -p 8000:8000 backend-home-challenge
+docker run -p 8000:8000 backend-home-challenge
 ```
 
 ## Migraciones
