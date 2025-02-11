@@ -3,6 +3,9 @@ from pathlib import Path
 import click
 from alembic import command
 from alembic.config import Config
+from src.shared.infrastructure.logging.logger import get_logger
+
+logger = get_logger("DatabaseCLI")
 
 # Validate if src is in the path
 root_dir = Path(__file__).parent.parent
@@ -11,11 +14,15 @@ sys.path.append(str(root_dir))
 from src.shared.infrastructure.config.settings import get_settings
 
 def get_alembic_config():
-    """Get Alembic config with correct database URL"""
-    settings = get_settings()
-    alembic_cfg = Config("alembic.ini")
-    alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
-    return alembic_cfg
+    try:
+        logger.debug("Getting Alembic configuration")
+        settings = get_settings()
+        alembic_cfg = Config("alembic.ini")
+        alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+        return alembic_cfg
+    except Exception as e:
+        logger.error(f"Error getting Alembic config: {str(e)}", exc_info=True)
+        sys.exit(1)
 
 @click.group()
 def cli():
@@ -26,12 +33,12 @@ def cli():
 def init():
     """Initialize database with all migrations"""
     try:
-        click.echo("Initializing database...")
+        logger.info("Initializing database...")
         cfg = get_alembic_config()
         command.upgrade(cfg, "head")
-        click.echo("✅ Database initialized successfully")
+        logger.info("✅ Database initialized successfully")
     except Exception as e:
-        click.echo(f"❌ Error initializing database: {e}", err=True)
+        logger.error(f"❌ Error initializing database: {str(e)}", exc_info=True)
         sys.exit(1)
 
 @cli.command()
@@ -76,10 +83,11 @@ def downgrade():
 def status():
     """Show current migration status"""
     try:
+        logger.info("Checking migration status...")
         cfg = get_alembic_config()
         command.current(cfg, verbose=True)
     except Exception as e:
-        click.echo(f"❌ Error getting status: {e}", err=True)
+        logger.error(f"❌ Error getting status: {str(e)}", exc_info=True)
         sys.exit(1)
 
 @cli.command()
@@ -87,12 +95,13 @@ def reset():
     """Reset database (WARNING: destroys all data)"""
     if click.confirm('⚠️  This will delete all data. Are you sure?'):
         try:
+            logger.warning("Resetting database...")
             cfg = get_alembic_config()
             command.downgrade(cfg, "base")
             command.upgrade(cfg, "head")
-            click.echo("✅ Database reset successfully")
+            logger.info("✅ Database reset successfully")
         except Exception as e:
-            click.echo(f"❌ Error resetting database: {e}", err=True)
+            logger.error(f"❌ Error resetting database: {str(e)}", exc_info=True)
             sys.exit(1)
 
 if __name__ == '__main__':

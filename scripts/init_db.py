@@ -9,6 +9,9 @@ sys.path.append(str(root_dir))
 from alembic import command
 from alembic.config import Config
 from src.shared.infrastructure.config.settings import get_settings
+from src.shared.infrastructure.logging.logger import get_logger
+
+logger = get_logger("DatabaseCLI")
 
 def init_db():
     """Initialize database with migrations and seed data"""
@@ -18,11 +21,11 @@ def init_db():
     alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
     try:
-        # Ejecutar todas las migraciones incluyendo el seed data
+        # Execute all migrations including seed data
         command.upgrade(alembic_cfg, "head")
-        print("Database initialized successfully with admin user")
+        logger.info("Database initialized successfully with admin user")
     except Exception as e:
-        print(f"Error initializing database: {e}")
+        logger.error(f"Error initializing database: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
