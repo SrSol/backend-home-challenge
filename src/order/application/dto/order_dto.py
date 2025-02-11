@@ -38,13 +38,13 @@ class CreateOrderDTO(BaseModel):
         return v
 
     def to_domain(self, waiter_id: int) -> 'Order':
-        """Convierte el DTO a una entidad de dominio"""
+        """Converts DTO to domain entity"""
         from src.order.domain.model.order import Order, OrderItem
         from src.shared.domain.value_objects import Money
-        
+
         items = []
         for item in self.items:
-            # Asegurarnos de que el precio sea Decimal
+            # Ensure price is Decimal
             try:
                 unit_price = Money(amount=item.unit_price)
             except Exception as e:
@@ -57,7 +57,7 @@ class CreateOrderDTO(BaseModel):
                     quantity=item.quantity
                 )
             )
-        
+
         return Order.create(
             customer_name=self.customer_name,
             items=items,
@@ -99,6 +99,7 @@ class OrderResponseDTO(BaseModel):
             created_at=order.created_at
         )
 
+
 class ProductSalesReportDTO(BaseModel):
     """DTO for product sales report response"""
     product_name: str
@@ -111,4 +112,4 @@ class ProductSalesReportDTO(BaseModel):
 class DateRangeDTO(BaseModel):
     """DTO for date range filter"""
     start_date: datetime
-    end_date: datetime 
+    end_date: datetime

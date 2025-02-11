@@ -1,4 +1,3 @@
-# File: src/user/application/dto/user_dto.py
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from typing import Optional
@@ -8,7 +7,7 @@ class CreateUserDTO(BaseModel):
     """DTO for user creation requests"""
     email: EmailStr = Field(..., description="User email address")
     name: str = Field(
-        ..., 
+        ...,
         min_length=2,
         error_messages={
             "min_length": "Name must be at least 2 characters long"
@@ -41,4 +40,3 @@ class UserResponseDTO(BaseModel):
             name=user.name,
             created_at=user.created_at
         )
-

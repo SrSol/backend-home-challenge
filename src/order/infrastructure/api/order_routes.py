@@ -54,20 +54,19 @@ def get_sales_report(
         default=None,
         description="End date for report (default: now)"
     ),
-    current_user: str = Depends(get_current_user),
     order_service: OrderService = Depends(get_order_service)
 ):
     """Gets product sales report filtered by date range"""
-    # Usar fechas por defecto si no se proporcionan
-    if not start_date:
+
+    if start_date is None:
         start_date = datetime.utcnow() - timedelta(days=30)
-    if not end_date:
+    if end_date is None:
         end_date = datetime.utcnow()
 
     date_range = DateTimeRange(
         start_date=start_date,
         end_date=end_date
     )
-    
+
     query = GetSalesReportQuery(order_service)
     return query.execute(date_range) 

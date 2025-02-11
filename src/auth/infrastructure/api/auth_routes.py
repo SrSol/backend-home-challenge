@@ -1,7 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from src.shared.infrastructure.persistence.database import get_db
-from src.user.infrastructure.persistence.postgresql_user_repository import PostgresqlUserRepository
 from src.user.domain.service.user_service import UserService
 from src.auth.infrastructure.jwt_service import JWTService
 from src.auth.application.dto.auth_dto import LoginDTO, TokenResponseDTO
@@ -23,7 +20,6 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Crear token con email y id del usuario
     token = JWTService.create_access_token({
         "sub": credentials.email,
         "user_id": user.id
@@ -32,4 +28,4 @@ def login(
     return TokenResponseDTO(
         access_token=token,
         token_type="bearer"
-    ) 
+    )

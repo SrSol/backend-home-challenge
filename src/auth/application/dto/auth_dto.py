@@ -7,4 +7,4 @@ class LoginDTO(BaseModel):
 class TokenResponseDTO(BaseModel):
     """DTO for token responses"""
     access_token: str
-    token_type: str = "bearer" 
+    token_type: str = "bearer"

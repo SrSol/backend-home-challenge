@@ -1,4 +1,3 @@
-# File: src/user/application/get_user.py
 from typing import Optional
 from src.user.domain.service.user_service import UserService
 from src.user.application.dto.user_dto import UserResponseDTO

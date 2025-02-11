@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List
 from src.order.domain.service.order_service import OrderService
 from src.order.application.dto.order_dto import ProductSalesReportDTO
@@ -25,4 +24,4 @@ class GetSalesReportQuery:
             end_date=date_range.end_date
         )
 
-        return [ProductSalesReportDTO(**item) for item in report] 
+        return [ProductSalesReportDTO(**item) for item in report]

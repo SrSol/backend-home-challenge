@@ -15,7 +15,7 @@ class CreateOrderCommand:
         waiter_id = self._user_service.get_user_id_by_email(waiter_email)
         if not waiter_id:
             raise ValidationException(f"Waiter with email {waiter_email} not found")
-            
+
         order = order_data.to_domain(waiter_id)
         created_order = self._order_service.create_order(order)
-        return OrderResponseDTO.from_entity(created_order) 
+        return OrderResponseDTO.from_entity(created_order)

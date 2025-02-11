@@ -1,4 +1,3 @@
-# File: src/shared/domain/exceptions.py
 class DomainException(Exception):
     pass
 

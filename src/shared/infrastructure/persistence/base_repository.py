@@ -1,4 +1,3 @@
-# File: src/shared/infrastructure/persistence/base_repository.py
 from typing import Generic, TypeVar, Type, List, Optional
 from sqlalchemy.orm import Session
 from ...domain.exceptions import EntityNotFoundException

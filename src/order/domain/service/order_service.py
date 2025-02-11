@@ -1,9 +1,7 @@
-from typing import List, Optional
+from typing import List
 from datetime import datetime
-from src.order.domain.model.order import Order, OrderItem
+from src.order.domain.model.order import Order
 from src.order.domain.repository.order_repository import OrderRepository
-from src.shared.domain.exceptions import ValidationException
-from src.shared.domain.value_objects import Money
 
 class OrderService:
     """Domain service for order-related business operations"""
@@ -24,4 +22,4 @@ class OrderService:
         return self._order_repository.get_product_sales_report(
             start_date=start_date,
             end_date=end_date
-        ) 
+        )

@@ -33,12 +33,12 @@ app = FastAPI(
 # Configure exception handlers
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    """Maneja errores de validación de Pydantic"""
+    """Handles Pydantic validation errors"""
     errors = exc.errors()
     if errors:
-        # Obtener el primer error
+        # Get the first error
         error = errors[0]
-        # Extraer el mensaje de error
+        # Extract the error message
         detail = error.get("msg", str(exc))
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -67,7 +67,7 @@ app.add_middleware(
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
-# Configurar manejadores de excepciones específicos
+# Configure specific exception handlers
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     headers = getattr(exc, "headers", None)

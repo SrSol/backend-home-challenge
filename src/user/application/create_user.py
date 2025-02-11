@@ -1,4 +1,3 @@
-# File: src/user/application/create_user.py
 from src.user.domain.service.user_service import UserService
 from src.user.application.dto.user_dto import CreateUserDTO, UserResponseDTO
 
@@ -11,7 +10,7 @@ class CreateUserCommand:
     def execute(self, data: dict) -> UserResponseDTO:
         # Validar datos de entrada usando CreateUserDTO
         user_dto = CreateUserDTO(**data)
-        
+
         # Delegar al servicio de dominio
         return self._user_service.create_user(
             email=user_dto.email,

@@ -1,4 +1,3 @@
-# File: src/user/domain/repository/user_repository.py
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from src.user.domain.model.user import User

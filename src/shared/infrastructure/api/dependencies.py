@@ -1,4 +1,3 @@
-# File: src/shared/infrastructure/api/dependencies.py
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -41,16 +40,16 @@ async def get_current_user(
                 detail="Could not validate credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        
+
         user = user_service.get_user_by_email(email)
-        
+
         if not user or user.id != user_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User not found",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-            
+
         return email
     except ValueError:
         raise HTTPException(

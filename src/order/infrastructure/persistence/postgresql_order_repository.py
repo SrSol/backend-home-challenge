@@ -31,7 +31,7 @@ class PostgresqlOrderRepository(OrderRepository):
         self._session.add(order_model)
         self._session.commit()
         self._session.refresh(order_model)
-        
+
         return self._order_model_to_entity(order_model)
 
     def find_by_id(self, id: int) -> Optional[Order]:
@@ -48,9 +48,14 @@ class PostgresqlOrderRepository(OrderRepository):
 
     def get_product_sales_report(self, start_date: datetime, end_date: datetime) -> List[dict]:
         """
-        Gets product sales report from database
+        Gets product sales report from database ordered by total quantity sold
 
-        Returns products ordered by total quantity sold in descending order
+        Args:
+            start_date: Start date for filtering orders
+            end_date: End date for filtering orders
+
+        Returns:
+            List of dictionaries containing sales data per product
         """
         results = (
             self._session.query(

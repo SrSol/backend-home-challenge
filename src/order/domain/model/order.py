@@ -41,18 +41,24 @@ class Order:
             raise ValidationException("Order must have at least one item")
         if self.waiter_id < 1:
             raise ValidationException("Invalid waiter id")
-        # Combinar items duplicados después de la validación
+        # Combine items with the same product name after validation
         self.items = self._combine_duplicate_items(self.items)
 
     def _combine_duplicate_items(self, items: List[OrderItem]) -> List[OrderItem]:
         """
         Combines items with the same product name by summing their quantities
+
+        Args:
+            items: List of order items to combine
+            
+        Returns:
+            List of combined order items
         """
         combined_items = {}
 
         for item in items:
             if item.product_name in combined_items:
-                # Si el producto ya existe, crear nuevo item con cantidad sumada
+                # If product exists, create new item with summed quantity
                 existing = combined_items[item.product_name]
                 combined_items[item.product_name] = OrderItem(
                     id=existing.id,
@@ -61,9 +67,9 @@ class Order:
                     quantity=existing.quantity + item.quantity
                 )
             else:
-                # Si es un nuevo producto, agregarlo al diccionario
+                # If new product, add to dictionary
                 combined_items[item.product_name] = item
-
+        
         return list(combined_items.values())
 
     @property

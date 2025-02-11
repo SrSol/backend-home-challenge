@@ -1,4 +1,3 @@
-# File: src/user/domain/service/user_service.py
 from typing import List, Optional
 from src.user.domain.model.user import User
 from src.user.domain.repository.user_repository import UserRepository
@@ -13,12 +12,12 @@ class UserService:
 
     def create_user(self, email: str, name: str) -> UserResponseDTO:
         """Creates a new user"""
-        # Verificar email duplicado antes de crear
+        # Validate if email already exists
         existing_user = self._repository.find_by_email(email)
         if existing_user:
             raise ValidationException(f"Email {email} is already registered")
 
-        # Crear y guardar usuario
+        # Create and save user
         user = User.create(email=email, name=name)
         saved_user = self._repository.save(user)
         return UserResponseDTO.from_entity(saved_user)

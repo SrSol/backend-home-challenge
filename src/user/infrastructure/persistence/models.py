@@ -1,4 +1,3 @@
-# File: src/user/infrastructure/persistence/models.py
 from sqlalchemy import Column, Integer, String, DateTime
 from src.shared.infrastructure.persistence.database import Base
 

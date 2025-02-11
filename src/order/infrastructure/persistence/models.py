@@ -10,7 +10,7 @@ class OrderModel(Base):
     customer_name = Column(String, nullable=False)
     waiter_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime, nullable=False)
-    
+
     items = relationship("OrderItemModel", back_populates="order", cascade="all, delete-orphan")
 
 class OrderItemModel(Base):
@@ -23,4 +23,4 @@ class OrderItemModel(Base):
     unit_price = Column(Numeric(10, 2), nullable=False)
     quantity = Column(Integer, nullable=False)
 
-    order = relationship("OrderModel", back_populates="items") 
+    order = relationship("OrderModel", back_populates="items")

@@ -1,4 +1,3 @@
-# File: src/user/infrastructure/persistence/postgresql_user_repository.py
 from typing import Optional, List
 from sqlalchemy.orm import Session
 
