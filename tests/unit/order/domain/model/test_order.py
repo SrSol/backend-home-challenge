@@ -72,14 +72,14 @@ class TestOrderItemModel:
         assert item.quantity == 2
         assert item.total_price.amount == Decimal("20.00")
 
-    @pytest.mark.parametrize("invalid_name", ["", " ", "a"])
-    def test_create_order_item_with_invalid_product_name_fails(self, invalid_name):
+    @pytest.mark.parametrize("invalid_product_name", ["", " ", "a"])
+    def test_create_order_item_with_invalid_product_name_fails(self, invalid_product_name):
         # When/Then
         with pytest.raises(ValidationException, match="Product name must be at least 2 characters long"):
             OrderItem(
-                product_name=invalid_name,
+                product_name=invalid_product_name,
                 unit_price=Money(amount=Decimal("10.00")),
-                quantity=2
+                quantity=1
             )
 
     def test_create_order_item_with_invalid_quantity_fails(self):
@@ -96,6 +96,6 @@ class TestOrderItemModel:
         with pytest.raises(ValidationException, match="Unit price must be greater than 0"):
             OrderItem(
                 product_name="Test Product",
-                unit_price=Money(amount=Decimal("0.00")),
-                quantity=2
+                unit_price=Money(amount=Decimal("0")),
+                quantity=1
             ) 

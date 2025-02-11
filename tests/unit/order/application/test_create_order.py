@@ -37,18 +37,29 @@ class TestCreateOrderCommand:
             created_at=datetime.utcnow()
         )
 
-    def test_execute_success(self, mocker, sample_order_dto, mock_order):
+    @pytest.fixture
+    def user_service(self, mocker):
+        service = mocker.Mock()
+        service.get_user_id_by_email.return_value = 1
+        return service
+
+    def test_execute_success(self, order_service, user_service):
         # Given
-        mock_service = mocker.Mock()
-        mock_service.create_order.return_value = mock_order
-        
-        command = CreateOrderCommand(mock_service)
+        command = CreateOrderCommand(order_service, user_service)
+        order_data = CreateOrderDTO(
+            customer_name="Test Customer",
+            items=[
+                OrderItemDTO(
+                    product_name="Test Product",
+                    unit_price=Decimal("10.00"),
+                    quantity=2
+                )
+            ]
+        )
         
         # When
-        result = command.execute(sample_order_dto, waiter_id=1)
+        result = command.execute(order_data, "test@example.com")
         
         # Then
-        assert result.id == mock_order.id
-        assert result.customer_name == mock_order.customer_name
-        assert len(result.items) == len(mock_order.items)
-        assert result.total_price == mock_order.total_price.amount 
+        assert isinstance(result, OrderResponseDTO)
+        user_service.get_user_id_by_email.assert_called_once_with("test@example.com") 

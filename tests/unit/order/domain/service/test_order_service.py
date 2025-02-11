@@ -30,35 +30,27 @@ class TestOrderService:
             }
         ]
 
-    def test_create_order_success(self, order_service, order_repository, sample_items):
+    def test_create_order_success(self, order_repository):
         # Given
-        customer_name = "Test Customer"
-        waiter_id = 1
-        
-        mock_order = Order.create(
-            customer_name=customer_name,
+        service = OrderService(order_repository)
+        order = Order.create(
+            customer_name="Test Customer",
             items=[
                 OrderItem(
-                    product_name=item["product_name"],
-                    unit_price=Money(amount=item["unit_price"]),
-                    quantity=item["quantity"]
+                    product_name="Test Product",
+                    unit_price=Money(amount=Decimal("10.00")),
+                    quantity=2
                 )
-                for item in sample_items
             ],
-            waiter_id=waiter_id
+            waiter_id=1
         )
-        order_repository.save.return_value = mock_order
-
+        
         # When
-        result = order_service.create_order(
-            customer_name=customer_name,
-            items=sample_items,
-            waiter_id=waiter_id
-        )
-
+        result = service.create_order(order)
+        
         # Then
-        assert result == mock_order
-        order_repository.save.assert_called_once()
+        assert isinstance(result, Order)
+        order_repository.save.assert_called_once_with(order)
 
     def test_get_product_sales_report_success(self, order_service, order_repository):
         # Given

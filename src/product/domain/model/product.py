@@ -15,9 +15,6 @@ class Product:
     id: Optional[int] = None
 
     def __post_init__(self):
-        self._validate()
-
-    def _validate(self):
         if not self.name or len(self.name.strip()) < 2:
             raise ValidationException("Product name must be at least 2 characters long")
         if self.current_price.amount <= 0:

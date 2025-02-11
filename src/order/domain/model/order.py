@@ -14,6 +14,9 @@ class OrderItem:
     id: Optional[int] = None
 
     def __post_init__(self):
+        """Validates the order item after initialization"""
+        if not self.product_name or len(self.product_name.strip()) < 2:
+            raise ValidationException("Product name must be at least 2 characters long")
         if self.quantity <= 0:
             raise ValidationException("Quantity must be greater than 0")
         if self.unit_price.amount <= 0:
@@ -42,11 +45,6 @@ class Order:
 
     @property
     def total_price(self) -> Money:
-        # Crear un Money con Decimal('0.01') como valor inicial
-        zero_money = Money(amount=Decimal('0.01'))
-        if not self.items:
-            return zero_money
-        
         # Sumar los precios totales de cada item
         total = sum((item.total_price.amount for item in self.items), Decimal('0'))
         return Money(amount=total)

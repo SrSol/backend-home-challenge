@@ -15,6 +15,9 @@ class JWTService:
     @classmethod
     def create_access_token(cls, data: Dict) -> str:
         """Creates a JWT token"""
+        if "sub" not in data or "user_id" not in data:
+            raise ValueError("Token must include 'sub' and 'user_id'")
+            
         to_encode = data.copy()
         expire = datetime.utcnow() + timedelta(minutes=cls.ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({
@@ -28,6 +31,11 @@ class JWTService:
         """Verifies a JWT token"""
         try:
             payload = jwt.decode(token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM])
+            
+            # Verificar campos requeridos
+            if "sub" not in payload or "user_id" not in payload:
+                raise ValueError("Token must include 'sub' and 'user_id'")
+                
             return payload
-        except JWTError:
+        except (JWTError, ValueError) as e:
             raise ValueError("Could not validate credentials") 

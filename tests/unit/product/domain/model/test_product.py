@@ -3,6 +3,7 @@ from decimal import Decimal
 from src.product.domain.model.product import Product
 from src.shared.domain.exceptions import ValidationException
 from src.shared.domain.value_objects import Money
+from datetime import datetime
 
 class TestProductModel:
     def test_create_product_success(self):
@@ -27,13 +28,15 @@ class TestProductModel:
             )
 
     @pytest.mark.parametrize("invalid_price", [
-        Decimal("0.00"),
-        Decimal("-1.00")
+        Decimal("0"),
+        Decimal("-1"),
     ])
     def test_create_product_with_invalid_price_fails(self, invalid_price):
         # When/Then
         with pytest.raises(ValidationException, match="Price must be greater than 0"):
-            Product.create(
+            Product(
                 name="Test Product",
-                price=invalid_price
+                current_price=Money(amount=invalid_price),
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow()
             ) 
