@@ -3,7 +3,6 @@ from typing import List, Optional
 from datetime import datetime
 from src.shared.domain.exceptions import ValidationException
 from src.shared.domain.value_objects import Money
-from decimal import Decimal
 
 @dataclass(frozen=True)
 class OrderItem:
@@ -26,7 +25,7 @@ class OrderItem:
     def total_price(self) -> Money:
         return self.unit_price * self.quantity
 
-@dataclass(frozen=True)
+@dataclass
 class Order:
     """Order aggregate root entity"""
     customer_name: str
@@ -42,12 +41,34 @@ class Order:
             raise ValidationException("Order must have at least one item")
         if self.waiter_id < 1:
             raise ValidationException("Invalid waiter id")
+        # Combinar items duplicados después de la validación
+        self.items = self._combine_duplicate_items(self.items)
+
+    def _combine_duplicate_items(self, items: List[OrderItem]) -> List[OrderItem]:
+        """
+        Combines items with the same product name by summing their quantities
+        """
+        combined_items = {}
+
+        for item in items:
+            if item.product_name in combined_items:
+                # Si el producto ya existe, crear nuevo item con cantidad sumada
+                existing = combined_items[item.product_name]
+                combined_items[item.product_name] = OrderItem(
+                    id=existing.id,
+                    product_name=existing.product_name,
+                    unit_price=existing.unit_price,
+                    quantity=existing.quantity + item.quantity
+                )
+            else:
+                # Si es un nuevo producto, agregarlo al diccionario
+                combined_items[item.product_name] = item
+
+        return list(combined_items.values())
 
     @property
     def total_price(self) -> Money:
-        # Sumar los precios totales de cada item
-        total = sum((item.total_price.amount for item in self.items), Decimal('0'))
-        return Money(amount=total)
+        return Money(amount=sum(item.total_price.amount for item in self.items))
 
     @staticmethod
     def create(customer_name: str, items: List[OrderItem], waiter_id: int) -> 'Order':
@@ -57,4 +78,10 @@ class Order:
             items=items,
             waiter_id=waiter_id,
             created_at=datetime.utcnow()
-        ) 
+        )
+
+    @property
+    def total_amount(self) -> Money:
+        return Money(
+            amount=sum(item.total_price.amount for item in self.items)
+        )

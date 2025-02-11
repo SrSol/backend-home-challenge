@@ -98,4 +98,109 @@ class TestOrderItemModel:
                 product_name="Test Product",
                 unit_price=Money(amount=Decimal("0")),
                 quantity=1
-            ) 
+            )
+
+class TestOrder:
+    @pytest.fixture
+    def sample_items(self):
+        return [
+            OrderItem(
+                product_name="Test Product",
+                unit_price=Money(amount=Decimal("10.00")),
+                quantity=2
+            ),
+            OrderItem(
+                product_name="Test Product",  # Mismo producto
+                unit_price=Money(amount=Decimal("10.00")),
+                quantity=3
+            ),
+            OrderItem(
+                product_name="Other Product",
+                unit_price=Money(amount=Decimal("15.00")),
+                quantity=1
+            )
+        ]
+
+    def test_create_order_combines_duplicate_items(self):
+        # Given
+        items = [
+            OrderItem(
+                product_name="Test Product",
+                unit_price=Money(amount=Decimal("10.00")),
+                quantity=2
+            ),
+            OrderItem(
+                product_name="Test Product",  # Mismo producto
+                unit_price=Money(amount=Decimal("10.00")),
+                quantity=3
+            ),
+            OrderItem(
+                product_name="Other Product",
+                unit_price=Money(amount=Decimal("15.00")),
+                quantity=1
+            )
+        ]
+
+        # When
+        order = Order.create(
+            customer_name="Test Customer",
+            items=items,
+            waiter_id=1
+        )
+
+        # Then
+        assert len(order.items) == 2  # Debería haber combinado los items duplicados
+
+        # Verificar el item combinado
+        test_product_item = next(
+            item for item in order.items 
+            if item.product_name == "Test Product"
+        )
+        assert test_product_item.quantity == 5  # 2 + 3
+        assert test_product_item.unit_price.amount == Decimal("10.00")
+
+        # Verificar el otro item
+        other_product_item = next(
+            item for item in order.items 
+            if item.product_name == "Other Product"
+        )
+        assert other_product_item.quantity == 1
+        assert other_product_item.unit_price.amount == Decimal("15.00")
+
+    def test_order_total_amount_with_combined_items(self, sample_items):
+        # When
+        order = Order.create(
+            customer_name="Test Customer",
+            items=sample_items,
+            waiter_id=1
+        )
+
+        # Then
+        # Total = (10.00 * 5) + (15.00 * 1) = 50.00 + 15.00 = 65.00
+        assert order.total_amount.amount == Decimal("65.00")
+
+    def test_order_total_price_with_combined_items(self):
+        # Given
+        items = [
+            OrderItem(
+                product_name="Test Product",
+                unit_price=Money(amount=Decimal("10.00")),
+                quantity=2
+            ),
+            OrderItem(
+                product_name="Test Product",
+                unit_price=Money(amount=Decimal("10.00")),
+                quantity=3
+            )
+        ]
+
+        # When
+        order = Order.create(
+            customer_name="Test Customer",
+            items=items,
+            waiter_id=1
+        )
+
+        # Then
+        assert len(order.items) == 1
+        assert order.total_price.amount == Decimal("50.00")
