@@ -38,7 +38,7 @@ Instala las dependencias del proyecto.
 pip install -r requirements.txt
 ```
 
-### Configuración
+### Configuración inicial
 
 Configurar variables de entorno.
 
@@ -51,8 +51,15 @@ Editar el archivo `.env` con tus configuraciones.
 Ejecutar migraciones.
 
 ```bash
-alembic upgrade head
+python scripts/db.py init
 ```
+
+Al ejecutar las migraciones se creará un usuario administrador por defecto:
+
+- Email: admin@email.com
+- Name: Admin
+
+Este usuario puede ser utilizado para el primer inicio de sesión y configuración del sistema.
 
 ### Ejecución
 
@@ -106,4 +113,28 @@ Ejecutar contenedor.
 
 ```bash
 docker run -d -p 8000:8000 backend-home-challenge
+```
+
+## Migraciones
+
+El proyecto incluye una herramienta CLI para la gestión de la base de datos:
+
+```bash
+# Inicializar la base de datos con migraciones
+python scripts/db.py init
+
+# Crear una nueva migración
+python scripts/db.py create-migration "description"
+
+# Aplicar migraciones pendientes
+python scripts/db.py upgrade
+
+# Revertir la última migración
+python scripts/db.py downgrade
+
+# Mostrar el estado de las migraciones
+python scripts/db.py status
+
+# Reiniciar la base de datos (cuidado!)
+python scripts/db.py reset
 ```
