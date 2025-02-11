@@ -1,5 +1,4 @@
 import pytest
-from datetime import datetime, timedelta
 from decimal import Decimal
 from fastapi import status
 from src.order.domain.model.order import Order, OrderItem
@@ -71,7 +70,7 @@ class TestOrderEndpoints:
             "unit price must be greater than 0"
         ),
     ])
-    def test_create_order_validation_error(self, client, invalid_data, expected_detail, test_user, auth_headers):
+    def test_create_order_validation_error(self, client, invalid_data, expected_detail, auth_headers):
         # When
         response = client.post(
             "/api/v1/orders/",
@@ -118,4 +117,4 @@ class TestOrderEndpoints:
         assert len(data) == 2
         assert data[0]["product_name"] == "Test Product 1"
         assert data[0]["total_quantity"] == 2
-        assert data[0]["total_price"] == "20.00" 
+        assert data[0]["total_price"] == "20.00"

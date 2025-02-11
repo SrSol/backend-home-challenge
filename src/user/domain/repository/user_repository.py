@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import Optional
 from src.user.domain.model.user import User
 
 class UserRepository(ABC):
@@ -12,15 +12,5 @@ class UserRepository(ABC):
 
     @abstractmethod
     def find_by_email(self, email: str) -> Optional[User]:
-        """Finds a user by email"""
-        pass
-
-    @abstractmethod
-    def find_by_id(self, id: int) -> Optional[User]:
-        """Finds a user by id"""
-        pass
-
-    @abstractmethod
-    def find_all(self) -> List[User]:
-        """Returns all users"""
+        """Finds a user by email - needed for duplicate validation"""
         pass

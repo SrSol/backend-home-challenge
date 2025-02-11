@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy.orm import Session
 
 from src.user.domain.model.user import User
@@ -28,16 +28,6 @@ class PostgresqlUserRepository(UserRepository):
             UserModel.email == email
         ).first()
         return self._user_model_to_entity(user_model) if user_model else None
-
-    def find_by_id(self, id: int) -> Optional[User]:
-        user_model = self._session.query(UserModel).filter(
-            UserModel.id == id
-        ).first()
-        return self._user_model_to_entity(user_model) if user_model else None
-
-    def find_all(self) -> List[User]:
-        user_models = self._session.query(UserModel).all()
-        return [self._user_model_to_entity(um) for um in user_models]
 
     def _user_model_to_entity(self, user_model: UserModel) -> User:
         """Converts UserModel to User domain entity"""
