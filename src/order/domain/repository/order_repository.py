@@ -8,7 +8,7 @@ class OrderRepository(ABC):
 
     @abstractmethod
     def save(self, order: Order) -> Order:
-        """Saves an order and returns the saved entity"""
+        """Saves an order"""
         pass
 
     @abstractmethod
@@ -22,6 +22,19 @@ class OrderRepository(ABC):
         pass
 
     @abstractmethod
-    def get_product_sales_report(self, start_date: datetime, end_date: datetime) -> List[dict]:
-        """Gets product sales report within a date range"""
-        pass 
+    def get_product_sales_report(
+        self,
+        start_date: datetime,
+        end_date: datetime
+    ) -> List[dict]:
+        """
+        Gets product sales report within date range, ordered by quantity sold
+
+        Args:
+            start_date: Start date for report
+            end_date: End date for report
+
+        Returns:
+            List of dicts with product sales data, ordered by quantity desc
+        """
+        pass

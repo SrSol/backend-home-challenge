@@ -49,7 +49,7 @@ class CreateOrderDTO(BaseModel):
                 unit_price = Money(amount=item.unit_price)
             except Exception as e:
                 raise ValueError(f"Invalid unit price: {item.unit_price} ({type(item.unit_price)})")
-            
+
             items.append(
                 OrderItem(
                     product_name=item.product_name,
@@ -100,7 +100,15 @@ class OrderResponseDTO(BaseModel):
         )
 
 class ProductSalesReportDTO(BaseModel):
-    """DTO for product sales report"""
+    """DTO for product sales report response"""
     product_name: str
     total_quantity: int
-    total_price: Decimal 
+    total_price: Decimal
+
+    class Config:
+        from_attributes = True
+
+class DateRangeDTO(BaseModel):
+    """DTO for date range filter"""
+    start_date: datetime
+    end_date: datetime 

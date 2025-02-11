@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from src.shared.infrastructure.persistence.database import get_db
@@ -46,20 +46,28 @@ def create_order(
 
 @router.get("/report", response_model=List[ProductSalesReportDTO])
 def get_sales_report(
+    start_date: datetime = Query(
+        default=None,
+        description="Start date for report (default: 30 days ago)"
+    ),
+    end_date: datetime = Query(
+        default=None,
+        description="End date for report (default: now)"
+    ),
     current_user: str = Depends(get_current_user),
     order_service: OrderService = Depends(get_order_service)
 ):
-    """Gets product sales report"""
-    try:
-        # Si no se proporcionan fechas, usar un rango por defecto
+    """Gets product sales report filtered by date range"""
+    # Usar fechas por defecto si no se proporcionan
+    if not start_date:
         start_date = datetime.utcnow() - timedelta(days=30)
+    if not end_date:
         end_date = datetime.utcnow()
-        date_range = DateTimeRange(start_date=start_date, end_date=end_date)
-        
-        query = GetSalesReportQuery(order_service)
-        return query.execute(date_range)
-    except ValidationException as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        ) 
+
+    date_range = DateTimeRange(
+        start_date=start_date,
+        end_date=end_date
+    )
+    
+    query = GetSalesReportQuery(order_service)
+    return query.execute(date_range) 

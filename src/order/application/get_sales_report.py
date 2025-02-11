@@ -11,17 +11,18 @@ class GetSalesReportQuery:
         self._order_service = order_service
 
     def execute(self, date_range: DateTimeRange) -> List[ProductSalesReportDTO]:
-        """Executes the get sales report query"""
+        """
+        Gets sales report for date range
+
+        Args:
+            date_range: Start and end dates for report
+
+        Returns:
+            List of products with sales data, ordered by quantity
+        """
         report = self._order_service.get_product_sales_report(
             start_date=date_range.start_date,
             end_date=date_range.end_date
         )
 
-        return [
-            ProductSalesReportDTO(
-                product_name=item["product_name"],
-                total_quantity=item["total_quantity"],
-                total_price=item["total_price"]
-            )
-            for item in report
-        ] 
+        return [ProductSalesReportDTO(**item) for item in report] 

@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
 from src.order.domain.model.order import Order, OrderItem
 from src.order.domain.repository.order_repository import OrderRepository
@@ -27,7 +27,7 @@ class PostgresqlOrderRepository(OrderRepository):
                 for item in order.items
             ]
         )
-        
+
         self._session.add(order_model)
         self._session.commit()
         self._session.refresh(order_model)
@@ -47,25 +47,36 @@ class PostgresqlOrderRepository(OrderRepository):
         return [self._order_model_to_entity(om) for om in order_models]
 
     def get_product_sales_report(self, start_date: datetime, end_date: datetime) -> List[dict]:
-        report = self._session.query(
-            OrderItemModel.product_name,
-            func.sum(OrderItemModel.quantity).label("total_quantity"),
-            func.sum(OrderItemModel.unit_price * OrderItemModel.quantity).label("total_price")
-        ).join(OrderModel).filter(
-            OrderModel.created_at.between(start_date, end_date)
-        ).group_by(
-            OrderItemModel.product_name
-        ).order_by(
-            func.sum(OrderItemModel.quantity).desc()
-        ).all()
+        """
+        Gets product sales report from database
+
+        Returns products ordered by total quantity sold in descending order
+        """
+        results = (
+            self._session.query(
+                OrderItemModel.product_name,
+                func.sum(OrderItemModel.quantity).label('total_quantity'),
+                func.sum(
+                    OrderItemModel.quantity * OrderItemModel.unit_price
+                ).label('total_price')
+            )
+            .join(OrderModel)
+            .filter(
+                OrderModel.created_at >= start_date,
+                OrderModel.created_at <= end_date
+            )
+            .group_by(OrderItemModel.product_name)
+            .order_by(desc('total_quantity'))
+            .all()
+        )
 
         return [
             {
-                "product_name": r.product_name,
-                "total_quantity": r.total_quantity,
-                "total_price": r.total_price
+                'product_name': r.product_name,
+                'total_quantity': r.total_quantity,
+                'total_price': r.total_price
             }
-            for r in report
+            for r in results
         ]
 
     def _order_model_to_entity(self, order_model: OrderModel) -> Order:
@@ -84,4 +95,4 @@ class PostgresqlOrderRepository(OrderRepository):
                 )
                 for item in order_model.items
             ]
-        ) 
+        )
