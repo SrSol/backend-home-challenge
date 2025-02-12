@@ -1,7 +1,5 @@
-# File: tests/unit/user/application/test_create_user.py
 import pytest
 from datetime import datetime
-from unittest.mock import Mock
 from src.user.application.create_user import CreateUserCommand
 from src.user.domain.model.user import User
 from src.shared.domain.value_objects import Email
@@ -21,7 +19,7 @@ class TestCreateUserCommand:
         # Given
         mock_service = mocker.Mock()
         mock_service.create_user.return_value = UserResponseDTO.from_entity(mock_user)
-        
+
         command = CreateUserCommand(mock_service)
         user_data = CreateUserDTO(
             email="test@example.com",

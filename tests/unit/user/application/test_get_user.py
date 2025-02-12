@@ -1,7 +1,5 @@
-# File: tests/unit/user/application/test_get_user.py
 import pytest
 from datetime import datetime
-from unittest.mock import Mock
 from src.user.application.get_user import GetUserQuery
 from src.user.domain.model.user import User
 from src.shared.domain.value_objects import Email
@@ -42,7 +40,7 @@ class TestGetUserQuery:
 
         # When
         result = query.execute("nonexistent@example.com")
-        
+
         # Then
         assert result is None
         mock_service.get_user_by_email.assert_called_once_with("nonexistent@example.com")
