@@ -3,15 +3,15 @@ from pathlib import Path
 import click
 from alembic import command
 from alembic.config import Config
-from src.shared.infrastructure.logging.logger import get_logger
-
-logger = get_logger("DatabaseCLI")
 
 # Validate if src is in the path
 root_dir = Path(__file__).parent.parent
 sys.path.append(str(root_dir))
 
 from src.shared.infrastructure.config.settings import get_settings
+from src.shared.infrastructure.logging.logger import get_logger
+
+logger = get_logger("DatabaseCLI")
 
 def get_alembic_config():
     try:

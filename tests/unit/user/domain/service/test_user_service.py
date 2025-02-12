@@ -1,8 +1,6 @@
-# File: tests/unit/user/domain/service/test_user_service.py
 import pytest
 from unittest.mock import Mock
 from datetime import datetime
-from decimal import Decimal
 from src.user.domain.service.user_service import UserService
 from src.user.domain.model.user import User
 from src.shared.domain.exceptions import ValidationException
@@ -31,13 +29,13 @@ class TestUserService:
         # Given
         user_repository.find_by_email.return_value = None
         user_repository.save.return_value = sample_user
-        
+
         # When
         result = user_service.create_user(
             email="test@example.com",
             name="Test User"
         )
-        
+
         # Then
         assert isinstance(result, UserResponseDTO)
         assert result.email == str(sample_user.email)
@@ -47,7 +45,7 @@ class TestUserService:
     def test_create_user_with_existing_email_fails(self, user_service, user_repository, sample_user):
         # Given
         user_repository.find_by_email.return_value = sample_user
-        
+
         # When/Then
         with pytest.raises(ValidationException, match="Email test@example.com is already registered"):
             user_service.create_user(
@@ -58,10 +56,10 @@ class TestUserService:
     def test_get_user_by_email_success(self, user_service, user_repository, sample_user):
         # Given
         user_repository.find_by_email.return_value = sample_user
-        
+
         # When
         result = user_service.get_user_by_email("test@example.com")
-        
+
         # Then
         assert isinstance(result, UserResponseDTO)
         assert result.email == str(sample_user.email)

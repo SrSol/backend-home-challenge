@@ -1,12 +1,9 @@
-# File: src/shared/domain/value_objects.py
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
-from typing import Optional
 from dataclasses import dataclass
 from src.shared.domain.exceptions import ValidationException
 import re
 from decimal import Decimal
-from pydantic import field_validator
 
 class DateTimeRange(BaseModel):
     start_date: datetime
@@ -27,18 +24,17 @@ class Email:
 
     @staticmethod
     def _is_valid_email(email: str) -> bool:
-        # Patrón básico de validación de email
         pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return bool(re.match(pattern, email))
 
     def __str__(self):
         return self.value
 
-    def __json__(self):  # Para serialización JSON
+    def __json__(self):
         return str(self)
 
 class Money(BaseModel):
-    amount: Decimal = Field(..., gt=0)  # Usar Field para validación
+    amount: Decimal = Field(..., gt=0)
     currency: str = "MXN"
 
     @field_validator('amount', mode='before')

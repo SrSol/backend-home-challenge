@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from src.shared.infrastructure.persistence.database import get_db
 from src.shared.infrastructure.api.dependencies import get_current_user
 from src.shared.domain.exceptions import ValidationException
@@ -63,9 +63,9 @@ def get_sales_report(
     """Gets product sales report filtered by date range"""
 
     if start_date is None:
-        start_date = datetime.utcnow() - timedelta(days=30)
+        start_date = datetime.now(timezone.utc) - timedelta(days=30)
     if end_date is None:
-        end_date = datetime.utcnow()
+        end_date = datetime.now(timezone.utc)
 
     date_range = DateTimeRange(
         start_date=start_date,
@@ -73,4 +73,4 @@ def get_sales_report(
     )
 
     query = GetSalesReportQuery(order_service)
-    return query.execute(date_range) 
+    return query.execute(date_range)

@@ -27,10 +27,10 @@ class TestCreateUserCommand:
             email="test@example.com",
             name="Test User"
         )
-        
+
         # When
         result = command.execute(user_data.model_dump())
-        
+
         # Then
         assert isinstance(result, UserResponseDTO)
         assert result.email == str(mock_user.email)

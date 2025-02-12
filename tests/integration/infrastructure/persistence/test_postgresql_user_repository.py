@@ -1,6 +1,5 @@
 import pytest
 from datetime import datetime
-from src.user.domain.model.user import User
 from src.user.infrastructure.persistence.postgresql_user_repository import PostgresqlUserRepository
 
 class TestPostgresqlUserRepository:

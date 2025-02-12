@@ -1,4 +1,3 @@
-# File: tests/integration/api/test_user_endpoints.py
 import pytest
 from fastapi import status
 

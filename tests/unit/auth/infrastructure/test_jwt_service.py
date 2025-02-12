@@ -7,10 +7,10 @@ class TestJWTService:
     def test_create_access_token_success(self):
         # Given
         data = {"sub": "test@example.com", "user_id": 1}
-        
+
         # When
         token = JWTService.create_access_token(data)
-        
+
         # Then
         payload = jwt.decode(token, JWTService.SECRET_KEY, algorithms=[JWTService.ALGORITHM])
         assert payload["sub"] == data["sub"]
@@ -22,10 +22,10 @@ class TestJWTService:
         # Given
         data = {"sub": "test@example.com", "user_id": 1}
         token = JWTService.create_access_token(data)
-        
+
         # When
         payload = JWTService.verify_token(token)
-        
+
         # Then
         assert payload["sub"] == data["sub"]
         assert payload["user_id"] == data["user_id"]
@@ -37,7 +37,7 @@ class TestJWTService:
             JWTService.SECRET_KEY,
             algorithm=JWTService.ALGORITHM
         )
-        
+
         # When/Then
         with pytest.raises(ValueError, match="Could not validate credentials"):
             JWTService.verify_token(expired_token)
@@ -49,7 +49,7 @@ class TestJWTService:
             "wrong_secret",
             algorithm=JWTService.ALGORITHM
         )
-        
+
         # When/Then
         with pytest.raises(ValueError, match="Could not validate credentials"):
             JWTService.verify_token(token)
@@ -57,11 +57,11 @@ class TestJWTService:
     def test_verify_token_without_email_fails(self):
         # Given
         token = jwt.encode(
-            {"foo": "bar"},  # Token sin 'sub' ni 'user_id'
+            {"foo": "bar"},
             JWTService.SECRET_KEY,
             algorithm=JWTService.ALGORITHM
         )
-        
+
         # When/Then
         with pytest.raises(ValueError, match="Could not validate credentials"):
             JWTService.verify_token(token)

@@ -10,7 +10,6 @@ class TestCreateOrderCommand:
     @pytest.fixture
     def order_service(self, mocker):
         service = mocker.Mock()
-        # Configurar el mock para devolver un OrderResponseDTO
         service.create_order.return_value = Order(
             id=1,
             customer_name="Test Customer",
@@ -53,4 +52,4 @@ class TestCreateOrderCommand:
         # Then
         assert isinstance(result, OrderResponseDTO)
         user_service.get_user_id_by_email.assert_called_once_with("test@example.com")
-        order_service.create_order.assert_called_once() 
+        order_service.create_order.assert_called_once()

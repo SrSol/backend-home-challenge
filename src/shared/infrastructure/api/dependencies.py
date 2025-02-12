@@ -6,9 +6,9 @@ from src.user.infrastructure.persistence.postgresql_user_repository import Postg
 from src.user.domain.service.user_service import UserService
 from src.auth.infrastructure.jwt_service import JWTService
 
-# Configurar HTTPBearer para devolver 401 en lugar de 403
+# Configure HTTPBearer to return 401 instead of 403
 security = HTTPBearer(
-    auto_error=False,  # Cambiar a False para manejar nosotros el error
+    auto_error=False,  # Change to False to handle error ourselves
     description="JWT token required"
 )
 

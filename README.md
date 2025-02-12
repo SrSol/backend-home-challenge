@@ -145,6 +145,14 @@ El proyecto implementa Clean Architecture con las siguientes capas:
 
 ### Módulos
 
+### Auth
+
+Gestión de autenticación:
+
+- JWT
+- DTOs
+- Casos de uso (login)
+
 ### Shared
 
 Componentes reutilizables:
@@ -162,45 +170,38 @@ Gestión de usuarios:
 - Modelo de dominio (User)
 - Repositorio abstracto
 - Implementación PostgreSQL
-- DTOs y mappers
+- DTOs
 - Casos de uso (crear usuario)
 
 ### Order
 
 Gestión de órdenes:
 
-- Modelos (Order, OrderItem)
-- Repositorio
+- Modelos de dominio (Order, OrderItem)
+- Repositorio abstracto
+- Implementación PostgreSQL
+- DTOs
 - Casos de uso (crear orden, reportes)
 - Validaciones de negocio
-
-## Flujo de Datos
-
-1. Request HTTP → FastAPI
-2. Controller/Route → DTO
-3. Command/Query → Domain Service
-4. Repository → Database
-5. Response ← DTO ← Entity
 
 ## Decisiones Técnicas
 
 ### Base de Datos
 
 - PostgreSQL por consistencia y reportes
-- Migraciones con Alembic
-- Índices para optimización
+- Migraciones con Alembic vía scripts para facilitar la implementación en diferentes entornos
+- Índices para en base de datos para optimización
 
 **Tablas**
 
-- users: id, name, email, password, created_at, updated_at
-- orders: id, user_id, total_amount, created_at, updated_at
-- order_items: id, order_id, product_id, quantity, price, created_at, updated_at
+- **users:** id, name, email, password, created_at
+- **orders:** id, customer_name, waiter_id, created_at
+- **order_items:** id, order_id, product_name, unit_price, quantity, created_at
 
 **Índice**
 
-- ix_users_email: Índice para búsquedas por email (login y validaciones)
-
-- ix_order_items_product_stats: Índice compuesto para reportes de ventas por producto y fecha
+- **ix_users_email:** Índice para búsquedas por email (login y validaciones)
+- **ix_order_items_product_stats:** Índice compuesto para reportes de ventas por producto y fecha
 
 ### Autenticación
 
@@ -219,7 +220,7 @@ Gestión de órdenes:
 - REST con FastAPI
 - Validación Pydantic
 - Documentación OpenAPI
-- Mermaid para diagramas
+- Diagramas mermaid
 
 ### Diagramas
 
@@ -227,5 +228,66 @@ Gestión de órdenes:
 - [Diagrama de Flujo de Autenticación](docs/diagrams/authentication_flow.mmd)
 - [Diagrama de Flujo de Creación de Orden](docs/diagrams/order_creation_flow.mmd)
 - [Modelo de Dominio](docs/diagrams/domain_model.mmd)
-- [Estructura de Carpetas](docs/diagrams/folder_structure.mmd)
 - [Flujo de Datos](docs/diagrams/data_flow.mmd)
+
+### Estructura del Proyecto
+
+```
+backend-home-challenge/
+├── alembic/                    # Configuración y migraciones de base de datos
+│   ├── versions/               # Archivos de migración
+│   └── env.py                  # Configuración del entorno de Alembic
+│
+├── container/                  # Archivos para construcción de Docker
+│   ├── Dockerfile             # Definición de imagen
+│   └── build.sh               # Script de construcción
+│
+├── docs/                       # Documentación del proyecto
+│   └── diagrams/              # Diagramas de arquitectura y flujos
+│
+├── logs/                      # Archivos de log generados por la aplicación
+│
+├── scripts/                   # Scripts de utilidad
+│   ├── db.py                 # CLI para gestión de base de datos
+│   └── init_db.py            # Inicialización de base de datos
+│
+├── src/                       # Código fuente principal
+│   ├── auth/                 # Módulo de autenticación
+│   │   ├── application/      # Casos de uso y DTOs
+│   │   └── infrastructure/   # Implementación JWT y rutas
+│   │
+│   ├── order/                # Módulo de órdenes
+│   │   ├── application/      # Casos de uso y DTOs
+│   │   ├── domain/          # Modelos y reglas de negocio
+│   │   └── infrastructure/   # Repositorios y rutas
+│   │
+│   ├── shared/               # Componentes compartidos
+│   │   ├── domain/          # Value objects y excepciones
+│   │   ├── application/     # DTOs comunes
+│   │   └── infrastructure/  # Configuración y middleware
+│   │
+│   ├── user/                # Módulo de usuarios
+│   │   ├── application/     # Casos de uso y DTOs
+│   │   ├── domain/         # Modelos y reglas de negocio
+│   │   └── infrastructure/ # Repositorios y rutas
+│   │
+│   └── main.py             # Punto de entrada de la aplicación
+│
+├── tests/                   # Tests automatizados
+│   ├── integration/        # Tests de integración
+│   │   ├── api/           # Tests de endpoints
+│   │   └── infrastructure/# Tests de repositorios
+│   │
+│   ├── unit/              # Tests unitarios
+│   │   ├── application/   # Tests de casos de uso
+│   │   └── domain/       # Tests de modelos y servicios
+│   │
+│   └── conftest.py        # Configuración y fixtures de pytest
+│
+├── .env.example           # Template de variables de entorno
+├── .gitignore            # Archivos ignorados por git
+├── alembic.ini           # Configuración de Alembic
+├── pyproject.toml        # Configuración de herramientas Python
+├── README.md             # Documentación principal
+└── requirements.txt      # Dependencias del proyecto
+```

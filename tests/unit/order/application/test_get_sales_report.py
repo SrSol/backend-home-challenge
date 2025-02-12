@@ -26,12 +26,12 @@ class TestGetSalesReportQuery:
         # Given
         mock_service = mocker.Mock()
         mock_service.get_product_sales_report.return_value = mock_report
-        
+
         query = GetSalesReportQuery(mock_service)
-        
+
         # When
         result = query.execute(date_range)
-        
+
         # Then
         assert len(result) == 1
         assert result[0].product_name == mock_report[0]["product_name"]
@@ -40,4 +40,4 @@ class TestGetSalesReportQuery:
         mock_service.get_product_sales_report.assert_called_once_with(
             start_date=date_range.start_date,
             end_date=date_range.end_date
-        ) 
+        )

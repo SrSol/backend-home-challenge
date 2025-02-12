@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from src.shared.domain.exceptions import ValidationException
 from src.shared.domain.value_objects import Money
 
@@ -50,7 +50,7 @@ class Order:
 
         Args:
             items: List of order items to combine
-            
+
         Returns:
             List of combined order items
         """
@@ -69,7 +69,7 @@ class Order:
             else:
                 # If new product, add to dictionary
                 combined_items[item.product_name] = item
-        
+
         return list(combined_items.values())
 
     @property
@@ -83,7 +83,7 @@ class Order:
             customer_name=customer_name,
             items=items,
             waiter_id=waiter_id,
-            created_at=datetime.utcnow()
+            created_at=datetime.now(timezone.utc)
         )
 
     @property

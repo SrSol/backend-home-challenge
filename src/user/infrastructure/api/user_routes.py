@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
 from src.shared.infrastructure.persistence.database import get_db
 from src.user.application.dto.user_dto import CreateUserDTO, UserResponseDTO
 from src.user.application.create_user import CreateUserCommand

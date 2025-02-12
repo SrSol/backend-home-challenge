@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 class Settings(BaseSettings):
-    APP_NAME: str = "Restaurant Service API"
+    APP_NAME: str = "Backend Home Challenge API"
     DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
     DATABASE_URL: str = "sqlite:///./test.db"

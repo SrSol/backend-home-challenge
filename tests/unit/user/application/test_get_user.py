@@ -21,12 +21,12 @@ class TestGetUserQuery:
         # Given
         mock_service = mocker.Mock()
         mock_service.get_user_by_email.return_value = UserResponseDTO.from_entity(mock_user)
-        
+
         query = GetUserQuery(mock_service)
-        
+
         # When
         result = query.execute("test@example.com")
-        
+
         # Then
         assert isinstance(result, UserResponseDTO)
         assert result.email == str(mock_user.email)
@@ -37,9 +37,9 @@ class TestGetUserQuery:
         # Given
         mock_service = mocker.Mock()
         mock_service.get_user_by_email.return_value = None
-        
+
         query = GetUserQuery(mock_service)
-        
+
         # When
         result = query.execute("nonexistent@example.com")
         

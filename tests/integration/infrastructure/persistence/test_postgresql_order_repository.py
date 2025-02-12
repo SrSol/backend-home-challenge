@@ -99,11 +99,11 @@ class TestPostgresqlOrderRepository:
 
         # Then
         assert len(report) == 2
-        # Verificar el producto más vendido
+        # Check the most sold product
         assert report[0]["product_name"] == "Test Product 1"
         assert report[0]["total_quantity"] == 2
         assert report[0]["total_price"] == Decimal("20.00")
-        # Verificar el segundo producto
+        # Check the second product
         assert report[1]["product_name"] == "Test Product 2"
         assert report[1]["total_quantity"] == 1
         assert report[1]["total_price"] == Decimal("15.00")

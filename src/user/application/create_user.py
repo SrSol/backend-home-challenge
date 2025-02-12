@@ -8,10 +8,11 @@ class CreateUserCommand:
         self._user_service = user_service
 
     def execute(self, data: dict) -> UserResponseDTO:
-        # Validar datos de entrada usando CreateUserDTO
+        """Execute the create user command"""
+        # Validate input data using CreateUserDTO
         user_dto = CreateUserDTO(**data)
 
-        # Delegar al servicio de dominio
+        # Delegate to domain service
         return self._user_service.create_user(
             email=user_dto.email,
             name=user_dto.name

@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime
+
 from decimal import Decimal
 from src.order.domain.model.order import Order, OrderItem
 from src.shared.domain.exceptions import ValidationException
@@ -110,7 +110,7 @@ class TestOrder:
                 quantity=2
             ),
             OrderItem(
-                product_name="Test Product",  # Mismo producto
+                product_name="Test Product",
                 unit_price=Money(amount=Decimal("10.00")),
                 quantity=3
             ),
@@ -130,7 +130,7 @@ class TestOrder:
                 quantity=2
             ),
             OrderItem(
-                product_name="Test Product",  # Mismo producto
+                product_name="Test Product",
                 unit_price=Money(amount=Decimal("10.00")),
                 quantity=3
             ),
@@ -149,9 +149,9 @@ class TestOrder:
         )
 
         # Then
-        assert len(order.items) == 2  # Debería haber combinado los items duplicados
+        assert len(order.items) == 2
 
-        # Verificar el item combinado
+        # Check the combined item
         test_product_item = next(
             item for item in order.items 
             if item.product_name == "Test Product"
@@ -159,7 +159,7 @@ class TestOrder:
         assert test_product_item.quantity == 5  # 2 + 3
         assert test_product_item.unit_price.amount == Decimal("10.00")
 
-        # Verificar el otro item
+        # Check the other item
         other_product_item = next(
             item for item in order.items 
             if item.product_name == "Other Product"

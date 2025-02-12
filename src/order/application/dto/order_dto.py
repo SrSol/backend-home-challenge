@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import List
+from src.order.domain.model.order import Order
 from datetime import datetime
 from decimal import Decimal
 

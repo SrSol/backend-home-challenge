@@ -1,6 +1,5 @@
-# File: tests/conftest.py
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.shared.infrastructure.persistence.database import Base, get_db
@@ -13,7 +12,6 @@ from src.order.domain.model.order import Order, OrderItem
 from src.auth.infrastructure.jwt_service import JWTService
 from src.user.infrastructure.persistence.postgresql_user_repository import PostgresqlUserRepository
 
-# Test database URL para SQLite en memoria
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
 @pytest.fixture(scope="session")
@@ -86,7 +84,7 @@ def mock_user():
         id=1,
         email=Email(value="test@example.com"),
         name="Test User",
-        created_at=datetime.utcnow()
+        created_at=datetime.now(timezone.utc)
     )
 
 @pytest.fixture
@@ -112,12 +110,12 @@ def mock_order(mock_user, mock_order_item):
         customer_name="Test Customer",
         items=[mock_order_item],
         waiter_id=mock_user.id,
-        created_at=datetime.utcnow()
+        created_at=datetime.now(timezone.utc)
     )
 
 @pytest.fixture
 def test_user(test_db):
-    """Crea un usuario de prueba en la base de datos"""
+    """Creates a test user in the database"""
     repository = PostgresqlUserRepository(test_db)
     user = User.create(
         email="test@example.com",
@@ -129,7 +127,7 @@ def test_user(test_db):
 
 @pytest.fixture
 def auth_token(test_user):
-    """Crea un token JWT válido para el usuario de prueba"""
+    """Creates a valid JWT token for the test user"""
     return JWTService.create_access_token({
         "sub": str(test_user.email),
         "user_id": test_user.id
@@ -137,10 +135,10 @@ def auth_token(test_user):
 
 @pytest.fixture
 def auth_headers(auth_token):
-    """Headers de autenticación con un token JWT válido"""
+    """Authentication headers with a valid JWT token"""
     return {"Authorization": f"Bearer {auth_token}"}
 
 @pytest.fixture
 def mock_auth_headers():
-    """Headers con un token mock para pruebas que no requieren validación real"""
+    """Headers with a mock token for tests that do not require real validation"""
     return {"Authorization": "Bearer test-token"}

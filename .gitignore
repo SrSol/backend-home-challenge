@@ -107,6 +107,8 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+logs/*
+logs/
 
 # Flask stuff:
 instance/
@@ -193,3 +195,6 @@ cython_debug/
 
 # Folder used by typer
 node_modules/
+
+# Database file
+test.db

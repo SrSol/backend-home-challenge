@@ -1,9 +1,7 @@
-# File: tests/unit/user/domain/model/test_user.py
 import pytest
-from datetime import datetime
+
 from src.user.domain.model.user import User
 from src.shared.domain.exceptions import ValidationException
-from src.shared.domain.value_objects import Email
 
 class TestUserModel:
     def test_create_user_success(self):

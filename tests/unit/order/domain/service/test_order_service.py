@@ -45,10 +45,10 @@ class TestOrderService:
             waiter_id=1
         )
         order_repository.save.return_value = order
-        
+
         # When
         result = service.create_order(order)
-        
+
         # Then
         assert isinstance(result, Order)
         order_repository.save.assert_called_once_with(order)
@@ -57,7 +57,7 @@ class TestOrderService:
         # Given
         start_date = datetime.now() - timedelta(days=7)
         end_date = datetime.now()
-        
+
         expected_report = [
             {
                 "product_name": "Test Product 1",
@@ -78,4 +78,4 @@ class TestOrderService:
         order_repository.get_product_sales_report.assert_called_once_with(
             start_date=start_date,
             end_date=end_date
-        ) 
+        )
