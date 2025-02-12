@@ -1,0 +1,30 @@
+flowchart LR
+subgraph External
+HTTP[HTTP Request]
+DB[(Database)]
+end
+
+    subgraph Infrastructure
+        C[Controllers]
+        R[Repository Impl]
+    end
+
+    subgraph Application
+        UC[Use Cases]
+        DTO[DTOs]
+    end
+
+    subgraph Domain
+        S[Services]
+        E[Entities]
+        RI[Repository Interface]
+    end
+
+    HTTP --> C
+    C --> DTO
+    DTO --> UC
+    UC --> S
+    S --> E
+    S --> RI
+    RI --> R
+    R --> DB

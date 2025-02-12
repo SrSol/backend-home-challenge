@@ -27,10 +27,8 @@ def upgrade() -> None:
         sa.UniqueConstraint('email')
     )
 
-    # Índice para búsquedas por email (login y validaciones)
-    op.create_index('ix_users_email', 'users', ['email'])
-    # Índice para ordenar por fecha de creación
-    op.create_index('ix_users_created_at', 'users', ['created_at'])
+    # Índice único para email - validación y búsqueda
+    op.create_index('ix_users_email', 'users', ['email'], unique=True)
 
     # Orders table
     op.create_table(
@@ -42,13 +40,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['waiter_id'], ['users.id'], ),
         sa.PrimaryKeyConstraint('id')
     )
-
-    # Índice para búsquedas por mesero
-    op.create_index('ix_orders_waiter_id', 'orders', ['waiter_id'])
-    # Índice para filtrar por rango de fechas (reportes)
-    op.create_index('ix_orders_created_at', 'orders', ['created_at'])
-    # Índice para búsquedas por cliente
-    op.create_index('ix_orders_customer_name', 'orders', ['customer_name'])
 
     # Order items table
     op.create_table(
@@ -68,25 +59,13 @@ def upgrade() -> None:
         'order_items',
         ['product_name', 'quantity', 'unit_price']
     )
-    # Índice para búsquedas por orden
-    op.create_index('ix_order_items_order_id', 'order_items', ['order_id'])
-    # Índice para búsquedas y agrupaciones por producto
-    op.create_index('ix_order_items_product_name', 'order_items', ['product_name'])
 
 def downgrade() -> None:
     # Eliminar índices de order_items
     op.drop_index('ix_order_items_product_stats', table_name='order_items')
-    op.drop_index('ix_order_items_order_id', table_name='order_items')
-    op.drop_index('ix_order_items_product_name', table_name='order_items')
-
-    # Eliminar índices de orders
-    op.drop_index('ix_orders_waiter_id', table_name='orders')
-    op.drop_index('ix_orders_created_at', table_name='orders')
-    op.drop_index('ix_orders_customer_name', table_name='orders')
 
     # Eliminar índices de users
     op.drop_index('ix_users_email', table_name='users')
-    op.drop_index('ix_users_created_at', table_name='users')
 
     # Eliminar tablas
     op.drop_table('order_items')

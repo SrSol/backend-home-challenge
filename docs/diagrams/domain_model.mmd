@@ -1,0 +1,40 @@
+classDiagram
+class User {
++id: int
++email: Email
++name: str
++created_at: datetime
++create(email, name)
+}
+
+    class Order {
+        +id: int
+        +customer_name: str
+        +items: List[OrderItem]
+        +waiter_id: int
+        +created_at: datetime
+        +create(customer_name, items, waiter_id)
+        +total_amount()
+    }
+
+    class OrderItem {
+        +product_name: str
+        +unit_price: Money
+        +quantity: int
+        +subtotal()
+    }
+
+    class Email {
+        +value: str
+        +validate()
+    }
+
+    class Money {
+        +amount: Decimal
+        +validate()
+    }
+
+    Order "1" *-- "many" OrderItem
+    Order "many" o-- "1" User
+    User -- Email
+    OrderItem -- Money

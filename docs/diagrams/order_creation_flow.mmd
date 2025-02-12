@@ -1,0 +1,21 @@
+sequenceDiagram
+participant C as Client
+participant R as Order Routes
+participant CM as CreateOrderCommand
+participant S as Order Service
+participant E as Order Entity
+participant RP as Repository
+participant DB as Database
+
+    C->>R: POST /orders {data}
+    R->>CM: execute(data)
+    CM->>E: create(data)
+    E-->>CM: order
+    CM->>S: create_order(order)
+    S->>RP: save(order)
+    RP->>DB: INSERT INTO orders
+    DB-->>RP: order_id
+    RP-->>S: Order
+    S-->>CM: Order
+    CM-->>R: OrderDTO
+    R-->>C: {order_data}

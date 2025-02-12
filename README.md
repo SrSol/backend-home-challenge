@@ -132,3 +132,100 @@ python scripts/db.py status
 # Reiniciar la base de datos (cuidado!)
 python scripts/db.py reset
 ```
+
+## Arquitectura
+
+### Visión General
+
+El proyecto implementa Clean Architecture con las siguientes capas:
+
+1. **Domain**: Reglas de negocio y modelos
+2. **Application**: Casos de uso
+3. **Infrastructure**: Implementaciones técnicas
+
+### Módulos
+
+### Shared
+
+Componentes reutilizables:
+
+- Value Objects (Email, Money)
+- Excepciones de dominio
+- Configuración
+- Middleware
+- Utilidades
+
+### User
+
+Gestión de usuarios:
+
+- Modelo de dominio (User)
+- Repositorio abstracto
+- Implementación PostgreSQL
+- DTOs y mappers
+- Casos de uso (crear usuario)
+
+### Order
+
+Gestión de órdenes:
+
+- Modelos (Order, OrderItem)
+- Repositorio
+- Casos de uso (crear orden, reportes)
+- Validaciones de negocio
+
+## Flujo de Datos
+
+1. Request HTTP → FastAPI
+2. Controller/Route → DTO
+3. Command/Query → Domain Service
+4. Repository → Database
+5. Response ← DTO ← Entity
+
+## Decisiones Técnicas
+
+### Base de Datos
+
+- PostgreSQL por consistencia y reportes
+- Migraciones con Alembic
+- Índices para optimización
+
+**Tablas**
+
+- users: id, name, email, password, created_at, updated_at
+- orders: id, user_id, total_amount, created_at, updated_at
+- order_items: id, order_id, product_id, quantity, price, created_at, updated_at
+
+**Índice**
+
+- ix_users_email: Índice para búsquedas por email (login y validaciones)
+
+- ix_order_items_product_stats: Índice compuesto para reportes de ventas por producto y fecha
+
+### Autenticación
+
+- JWT stateless
+- Sin refresh tokens
+- Validación por email
+
+### Testing
+
+- Fixtures compartidos
+- Base de datos SQLite en memoria
+- Mocks estratégicos
+
+### API
+
+- REST con FastAPI
+- Validación Pydantic
+- Documentación OpenAPI
+- Mermaid para diagramas
+
+### Diagramas
+
+- [Arquitectura General](docs/diagrams/general_architecture.mmd)
+- [Diagrama de Flujo de Autenticación](docs/diagrams/authentication_flow.mmd)
+- [Diagrama de Flujo de Creación de Orden](docs/diagrams/order_creation_flow.mmd)
+- [Modelo de Dominio](docs/diagrams/domain_model.mmd)
+- [Estructura de Carpetas](docs/diagrams/folder_structure.mmd)
+- [Flujo de Datos](docs/diagrams/data_flow.mmd)

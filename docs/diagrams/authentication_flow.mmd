@@ -1,0 +1,18 @@
+sequenceDiagram
+participant C as Client
+participant A as Auth Routes
+participant S as User Service
+participant J as JWT Service
+participant R as Repository
+participant D as Database
+
+    C->>A: POST /login {email}
+    A->>S: get_user_by_email()
+    S->>R: find_by_email()
+    R->>D: SELECT * FROM users
+    D-->>R: user_data
+    R-->>S: User
+    S-->>A: UserDTO
+    A->>J: create_access_token()
+    J-->>A: JWT token
+    A-->>C: {access_token, token_type}

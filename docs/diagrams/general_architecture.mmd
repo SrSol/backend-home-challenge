@@ -1,0 +1,35 @@
+graph TB
+subgraph API Layer
+FA[FastAPI]
+R[Routes]
+M[Middleware]
+end
+
+    subgraph Application Layer
+        C[Commands]
+        Q[Queries]
+        DTO[DTOs]
+    end
+
+    subgraph Domain Layer
+        S[Services]
+        E[Entities]
+        VO[Value Objects]
+        R_I[Repository Interface]
+    end
+
+    subgraph Infrastructure Layer
+        R_P[PostgreSQL Repository]
+        DB[(Database)]
+    end
+
+    FA --> R
+    R --> C
+    R --> Q
+    C --> S
+    Q --> S
+    S --> R_I
+    R_I --> R_P
+    R_P --> DB
+    S --> E
+    E --> VO
