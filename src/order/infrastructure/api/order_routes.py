@@ -33,7 +33,7 @@ def get_order_command(
     return CreateOrderCommand(order_service, user_service)
 
 @router.post("/", response_model=OrderResponseDTO, status_code=status.HTTP_201_CREATED)
-def create_order(
+async def create_order(
     order_data: CreateOrderDTO,
     current_user: str = Depends(get_current_user),
     command: CreateOrderCommand = Depends(get_order_command)
@@ -49,7 +49,7 @@ def create_order(
         )
 
 @router.get("/report", response_model=List[ProductSalesReportDTO])
-def get_sales_report(
+async def get_sales_report(
     start_date: datetime = Query(
         default=None,
         description="Start date for report (default: 30 days ago)"

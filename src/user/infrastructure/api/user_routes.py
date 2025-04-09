@@ -16,7 +16,7 @@ def get_user_service(db: Session = Depends(get_db)) -> UserService:
     return UserService(repository)
 
 @router.post("/", response_model=UserResponseDTO, status_code=status.HTTP_201_CREATED)
-def create_user(
+async def create_user(
     user_data: CreateUserDTO,
     user_service: UserService = Depends(get_user_service)
 ):

@@ -7,7 +7,7 @@ from src.shared.infrastructure.api.dependencies import get_user_service
 router = APIRouter(tags=["auth"])
 
 @router.post("/login", response_model=TokenResponseDTO)
-def login(
+async def login(
     credentials: LoginDTO,
     user_service: UserService = Depends(get_user_service)
 ):
