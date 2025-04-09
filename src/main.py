@@ -87,6 +87,20 @@ async def unauthorized_exception_handler(request: Request, exc: UnauthorizedExce
         headers={"WWW-Authenticate": "Bearer"}
     )
 
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    response = await call_next(request)
+    # Esto no es estrictamente necesario con FastAPI + Depends,
+    # pero puede ser útil para monitoreo
+    if hasattr(engine.pool, "status"):
+        app.state.db_pool_status = {
+            "checkedin": engine.pool.checkedin(),
+            "checkedout": engine.pool.checkedout(),
+            "size": engine.pool.size(),
+            "overflow": engine.pool.overflow()
+        }
+    return response
+
 # Include routers
 app.include_router(user_routes, prefix=settings.API_V1_STR)
 app.include_router(order_routes, prefix=settings.API_V1_STR)

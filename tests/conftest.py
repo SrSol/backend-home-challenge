@@ -2,6 +2,7 @@ import pytest
 from datetime import datetime, timezone
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from src.shared.infrastructure.persistence.database import Base, get_db
 from src.user.domain.model.user import User
 from src.shared.domain.value_objects import Email, Money
@@ -18,7 +19,8 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 def test_engine():
     engine = create_engine(
         SQLALCHEMY_DATABASE_URL,
-        connect_args={"check_same_thread": False}
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool
     )
     return engine
 
