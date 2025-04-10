@@ -90,8 +90,7 @@ async def unauthorized_exception_handler(request: Request, exc: UnauthorizedExce
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
     response = await call_next(request)
-    # Esto no es estrictamente necesario con FastAPI + Depends,
-    # pero puede ser útil para monitoreo
+
     if hasattr(engine.pool, "status"):
         app.state.db_pool_status = {
             "checkedin": engine.pool.checkedin(),
